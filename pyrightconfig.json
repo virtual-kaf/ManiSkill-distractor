@@ -1,0 +1,10 @@
+{
+    "exclude": [
+        "**/__pycache__",
+        "mani_skill/assets"
+    ],
+    "reportUnnecessaryTypeIgnoreComment": true,
+    "typeCheckingMode": "basic",
+    "reportUnusedImport": "error",
+    "reportUnusedVariable": "warning"
+}
