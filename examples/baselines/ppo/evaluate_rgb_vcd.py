@@ -4,10 +4,17 @@ import csv
 import json
 import os
 import random
+import sys
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Optional
+
+# Prefer this source checkout to an older site-packages installation when the
+# evaluator is launched directly from examples/baselines/ppo.
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+if (_REPO_ROOT / "mani_skill").is_dir():
+    sys.path.insert(0, str(_REPO_ROOT))
 
 import gymnasium as gym
 import numpy as np

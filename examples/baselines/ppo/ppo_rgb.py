@@ -1,10 +1,20 @@
 # docs and experiment results can be found at https://docs.cleanrl.dev/rl-algorithms/ppo/#ppo_continuous_actionpy
 from collections import defaultdict
 import os
+from pathlib import Path
 import random
+import sys
 import time
 from dataclasses import dataclass
 from typing import Optional
+
+# When this file is executed directly from examples/baselines/ppo, Python would
+# otherwise prefer an older ManiSkill installation in site-packages over this
+# source checkout. Put the repository root first without requiring an editable
+# reinstall on the remote training machine.
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+if (_REPO_ROOT / "mani_skill").is_dir():
+    sys.path.insert(0, str(_REPO_ROOT))
 
 import gymnasium as gym
 import numpy as np
