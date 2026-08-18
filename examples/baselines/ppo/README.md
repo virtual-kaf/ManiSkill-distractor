@@ -68,6 +68,45 @@ The examples.sh file has a full list of tested commands for running RGB based PP
 
 The results of running the baseline scripts for RGB based PPO are here: https://api.wandb.ai/links/stonet2000/k6lz966q
 
+### PickCube with Visual Distractors and VCD
+
+`PickCubeDistractor-v1` keeps the red PickCube target and its original rewards and
+success conditions, while adding zero to three task-irrelevant colored cubes. Train
+separate policies with zero and three distractors to study both out-of-distribution
+distractor robustness and distractor-trained robustness:
+
+```bash
+python ppo_rgb.py --env_id="PickCubeDistractor-v1" --num_distractors=0 \
+  --num_envs=256 --update_epochs=8 --num_minibatches=8 \
+  --total_timesteps=10_000_000 \
+  --exp_name="PickCubeDistractor-v1__ppo_rgb__train_d0__seed1"
+
+python ppo_rgb.py --env_id="PickCubeDistractor-v1" --num_distractors=3 \
+  --num_envs=256 --update_epochs=8 --num_minibatches=8 \
+  --total_timesteps=10_000_000 \
+  --exp_name="PickCubeDistractor-v1__ppo_rgb__train_d3__seed1"
+```
+
+The same checkpoint can then be evaluated with both deterministic vanilla PPO and
+continuous-action Visual Contrastive Decoding (VCD) across all four distractor
+counts. The evaluator uses explicitly paired episode seeds and writes
+`episodes.csv` plus `summary.json`:
+
+```bash
+python evaluate_rgb_vcd.py \
+  --checkpoint="runs/PickCubeDistractor-v1__ppo_rgb__train_d0__seed1/final_ckpt.pt" \
+  --num_eval_envs=8 --num_eval_episodes=100
+
+python evaluate_rgb_vcd.py \
+  --checkpoint="runs/PickCubeDistractor-v1__ppo_rgb__train_d3__seed1/final_ckpt.pt" \
+  --num_eval_envs=8 --num_eval_episodes=100 --capture-video
+```
+
+VCD defaults to `alpha=1`, `beta=0.1`, `gamma=0.1`, and `noise_steps=500`.
+It contrasts the clean and diffusion-noised action distributions only at inference
+time. Both vanilla and VCD actions are passed unchanged to `env.step`, so both use
+the same ManiSkill controller action-clipping path.
+
 ## Visual (RGB+Depth) Based RL
 
 WIP

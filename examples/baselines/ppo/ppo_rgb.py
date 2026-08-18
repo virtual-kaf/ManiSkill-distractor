@@ -54,6 +54,8 @@ class Args:
     # Algorithm specific arguments
     env_id: str = "PickCube-v1"
     """the id of the environment"""
+    num_distractors: Optional[int] = None
+    """number of distractor cubes for environments that support this argument"""
     include_state: bool = True
     """whether to include state information in observations"""
     total_timesteps: int = 10000000
@@ -307,6 +309,8 @@ if __name__ == "__main__":
     env_kwargs = dict(obs_mode="rgb", render_mode=args.render_mode, sim_backend="physx_cuda")
     if args.control_mode is not None:
         env_kwargs["control_mode"] = args.control_mode
+    if args.num_distractors is not None:
+        env_kwargs["num_distractors"] = args.num_distractors
     eval_envs = gym.make(args.env_id, num_envs=args.num_eval_envs, reconfiguration_freq=args.eval_reconfiguration_freq, **env_kwargs)
     envs = gym.make(args.env_id, num_envs=args.num_envs if not args.evaluate else 1, reconfiguration_freq=args.reconfiguration_freq, **env_kwargs)
 
